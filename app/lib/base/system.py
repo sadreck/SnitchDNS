@@ -26,12 +26,17 @@ class SystemManager:
     def process_list(self):
         processes = []
         for proc in psutil.process_iter():
-            processes.append(
-                {
-                    'id': proc.pid,
-                    'cmdline': proc.cmdline()
-                }
-            )
+            try:
+                processes.append(
+                    {
+                        'id': proc.pid,
+                        'cmdline': proc.cmdline()
+                    }
+                )
+            except psutil.NoSuchProcess:
+                # Ignore zombie processes
+                pass
+
         return processes
 
     def process_kill(self, pid):
